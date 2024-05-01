@@ -6,9 +6,6 @@
 	<TieredCompilation>true</TieredCompilation>
   </PropertyGroup>
   <ItemGroup>
-    <Content Remove="libman.json" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="DiffPlex" Version="1.7.2" />
