@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace CoreWiki.Notifications.Abstractions.Notifications
+namespace CoreWiki.Notifications.Abstractions.Notifications;
+
+public interface IEmailMessageFormatter
 {
-	public interface IEmailMessageFormatter
-    {
-		Task<string> FormatEmailMessage<T>(string templateName, T model) where T : class;
-    }
+	Task<string> FormatEmailMessage<T>(string templateName, T model) where T : class;
 }

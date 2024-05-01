@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 
-namespace CoreWiki.Notifications.Abstractions.Notifications
+namespace CoreWiki.Notifications.Abstractions.Notifications;
+
+public interface ITemplateParser
 {
-	public interface ITemplateParser
-	{
-	    Task<string> Parse<TModel>(IView view, TModel model) where TModel : class;
-	}
+	Task<string> Parse<TModel>(IView view, TModel model) where TModel : class;
 }

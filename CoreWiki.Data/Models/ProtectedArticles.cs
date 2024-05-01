@@ -1,19 +1,16 @@
-namespace CoreWiki.Data.EntityFramework.Models
-{
+namespace CoreWiki.Data.EntityFramework.Models;
 
-	public static class ProtectedArticles {
+public static class ProtectedArticles {
 
-		public static string[] ToArray() {
+	public static string[] ToArray() {
 
-			return new [] {
-				HomePage
-			};
-
-		}
-
-		public const string HomePage = "home-page";
-
+		return new [] {
+			HomePage
+		};
 
 	}
+
+	public const string HomePage = "home-page";
+
 
 }

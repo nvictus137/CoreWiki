@@ -1,17 +1,16 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CoreWiki.Pages
+namespace CoreWiki.Pages;
+
+public class ErrorModel : PageModel
 {
-    public class ErrorModel : PageModel
-    {
-        public string RequestId { get; set; }
+	public string RequestId { get; set; }
 
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+	public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
-        public void OnGet()
-        {
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
-        }
-    }
+	public void OnGet()
+	{
+		RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+	}
 }

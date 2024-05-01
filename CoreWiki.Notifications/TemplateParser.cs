@@ -11,21 +11,21 @@ using System.IO;
 using System.Threading.Tasks;
 using CoreWiki.Notifications.Abstractions.Notifications;
 
-namespace CoreWiki.Notifications
-{
-    public class TemplateParser : ITemplateParser
-	{
-	    private readonly IServiceProvider _serviceProvider;
-	    private readonly ITempDataProvider _tempDataProvider;
+namespace CoreWiki.Notifications;
 
-	    public TemplateParser(IServiceProvider serviceProvider, ITempDataProvider tempDataProvider)
-	    {
+public class TemplateParser : ITemplateParser
+{
+	private readonly IServiceProvider  _serviceProvider;
+	private readonly ITempDataProvider _tempDataProvider;
+
+	public TemplateParser(IServiceProvider serviceProvider, ITempDataProvider tempDataProvider)
+	{
 	        _serviceProvider = serviceProvider;
 	        _tempDataProvider = tempDataProvider;
 	    }
 
-	    public async Task<string> Parse<TModel>(IView view, TModel model) where TModel : class
-	    {
+	public async Task<string> Parse<TModel>(IView view, TModel model) where TModel : class
+	{
 	        using (var output = new StringWriter())
 	        {
 	            var actionContext = GetActionContext();
@@ -46,15 +46,15 @@ namespace CoreWiki.Notifications
 	        }
 	    }
 
-	    private TempDataDictionary GetTempDataDictionary(ActionContext actionContext)
-	    {
+	private TempDataDictionary GetTempDataDictionary(ActionContext actionContext)
+	{
 	        return new TempDataDictionary(
 	            actionContext.HttpContext,
 	            _tempDataProvider);
 	    }
 
-	    private ViewDataDictionary GetViewDictionary<TModel>(TModel model) where TModel : class
-	    {
+	private ViewDataDictionary GetViewDictionary<TModel>(TModel model) where TModel : class
+	{
 	        return new ViewDataDictionary(
 	            new EmptyModelMetadataProvider(),
 	            new ModelStateDictionary())
@@ -63,8 +63,8 @@ namespace CoreWiki.Notifications
 	        };
 	    }
 
-	    private ActionContext GetActionContext()
-	    {
+	private ActionContext GetActionContext()
+	{
 	        var httpContext = new DefaultHttpContext
 	        {
 	            RequestServices = _serviceProvider
@@ -74,5 +74,4 @@ namespace CoreWiki.Notifications
 	            new RouteData(),
 	            new ActionDescriptor());
 	    }
-    }
 }

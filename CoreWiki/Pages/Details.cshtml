@@ -1,6 +1,8 @@
 ﻿@page "{Slug?}"
 @using CoreWiki.Application.Common
-@model DetailsModel
+@using CoreWiki.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model CoreWiki.Pages.DetailsModel
 @{
 	var title = Localizer["Details"];
 	if (!string.IsNullOrEmpty(Model.Article.Topic))

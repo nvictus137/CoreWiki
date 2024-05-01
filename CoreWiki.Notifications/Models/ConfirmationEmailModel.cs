@@ -1,8 +1,7 @@
-﻿namespace CoreWiki.Notifications.Models
+﻿namespace CoreWiki.Notifications.Models;
+
+public class ConfirmationEmailModel : EmailMessageBaseModel
 {
-    public class ConfirmationEmailModel : EmailMessageBaseModel
-    {
-        public string ReturnUrl { get; set; }
-        public string ConfirmEmail { get; set; }
-    }
+	public string ReturnUrl    { get; set; }
+	public string ConfirmEmail { get; set; }
 }

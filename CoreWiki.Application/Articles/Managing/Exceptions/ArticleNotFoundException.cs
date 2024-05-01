@@ -1,25 +1,24 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace CoreWiki.Application.Articles.Managing.Exceptions
+namespace CoreWiki.Application.Articles.Managing.Exceptions;
+
+[Serializable]
+public class ArticleNotFoundException : Exception
 {
-	[Serializable]
-	public class ArticleNotFoundException : Exception
+	public ArticleNotFoundException()
 	{
-		public ArticleNotFoundException()
-		{
-		}
+	}
 
-		public ArticleNotFoundException(string message) : base(message)
-		{
-		}
+	public ArticleNotFoundException(string message) : base(message)
+	{
+	}
 
-		public ArticleNotFoundException(string message, Exception innerException) : base(message, innerException)
-		{
-		}
+	public ArticleNotFoundException(string message, Exception innerException) : base(message, innerException)
+	{
+	}
 
-		protected ArticleNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
-		{
-		}
+	protected ArticleNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
+	{
 	}
 }

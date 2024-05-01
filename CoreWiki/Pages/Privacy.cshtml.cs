@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CoreWiki.Pages
+namespace CoreWiki.Pages;
+
+public class PrivacyModel : PageModel
 {
-    public class PrivacyModel : PageModel
-    {
-        public void OnGet()
-        {
-        }
-    }
+	public void OnGet()
+	{
+	}
 }

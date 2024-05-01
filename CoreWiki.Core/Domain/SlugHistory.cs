@@ -1,17 +1,15 @@
 ﻿using NodaTime;
 
-namespace CoreWiki.Core.Domain
-{
-	public class SlugHistory {
+namespace CoreWiki.Core.Domain;
 
-		public int Id { get; set; }
+public class SlugHistory {
 
-		public virtual Article Article { get; set; }
+	public int Id { get; set; }
 
-		public string OldSlug { get; set; }
+	public virtual Article Article { get; set; }
 
-		public Instant Added { get; set; }
+	public string OldSlug { get; set; }
 
-	}
+	public Instant Added { get; set; }
 
 }

@@ -9,44 +9,43 @@ using CoreWiki.Notifications.Abstractions.Notifications;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace CoreWiki.Notifications
+namespace CoreWiki.Notifications;
+
+public static class StartupExtensions
 {
-	public static class StartupExtensions
+
+	public static IServiceCollection AddEmailNotifications(this IServiceCollection services, IConfiguration configuration)
 	{
+		services.AddHttpContextAccessor();
 
-		public static IServiceCollection AddEmailNotifications(this IServiceCollection services, IConfiguration configuration)
+		services.AddScoped<IUrlHelper>(x =>
 		{
-			services.AddHttpContextAccessor();
+			var actionContext = x.GetService<IActionContextAccessor>().ActionContext;
+			return new UrlHelper(actionContext);
+		});
 
-			services.AddScoped<IUrlHelper>(x =>
+		services.AddScoped<ITemplateProvider, TemplateProvider>();
+		services.AddScoped<ITemplateParser, TemplateParser>();
+		services.AddScoped<IEmailMessageFormatter, EmailMessageFormatter>();
+		services.AddScoped<IEmailNotifier, EmailNotifier>();
+		services.AddScoped<INotificationService, NotificationService>(sp =>
 			{
-				var actionContext = x.GetService<IActionContextAccessor>().ActionContext;
-				return new UrlHelper(actionContext);
-			});
+				var emailMessageFormatter = sp.GetService<IEmailMessageFormatter>();
+				var emailNotifier         = sp.GetService<IEmailNotifier>();
+				var loggerFactory         = sp.GetService<ILoggerFactory>();
+				return new NotificationService(emailMessageFormatter,
+					emailNotifier,
+					loggerFactory,
+					configuration.GetSection("url").Value );
+			}
+		);
 
-			services.AddScoped<ITemplateProvider, TemplateProvider>();
-			services.AddScoped<ITemplateParser, TemplateParser>();
-			services.AddScoped<IEmailMessageFormatter, EmailMessageFormatter>();
-			services.AddScoped<IEmailNotifier, EmailNotifier>();
-			services.AddScoped<INotificationService, NotificationService>(sp =>
-				{
-					var emailMessageFormatter = sp.GetService<IEmailMessageFormatter>();
-					var emailNotifier = sp.GetService<IEmailNotifier>();
-					var loggerFactory = sp.GetService<ILoggerFactory>();
-					return new NotificationService(emailMessageFormatter,
-						emailNotifier,
-						loggerFactory,
-						configuration.GetSection("url").Value );
-				}
-			);
+		//services.Configure<RazorViewEngineOptions>(options =>
+		//{
+		//	options.FileProviders.Add(
+		//		new EmbeddedFileProvider(typeof(TemplateProvider).GetTypeInfo().Assembly));
+		//});
+		return services;
 
-			//services.Configure<RazorViewEngineOptions>(options =>
-			//{
-			//	options.FileProviders.Add(
-			//		new EmbeddedFileProvider(typeof(TemplateProvider).GetTypeInfo().Assembly));
-			//});
-			return services;
-
-		}
 	}
 }

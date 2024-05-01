@@ -5,42 +5,41 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CoreWiki.Areas.Identity.Pages.UserAdmin
+namespace CoreWiki.Areas.Identity.Pages.UserAdmin;
+
+public class RolesModel : PageModel
 {
-	public class RolesModel : PageModel
+	[BindProperty]
+	[Required]
+	public string RoleName { get; set; }
+	private readonly RoleManager<IdentityRole> RoleManager;
+
+	public RolesModel(RoleManager<IdentityRole> roleManager)
 	{
-		[BindProperty]
-		[Required]
-		public string RoleName { get; set; }
-		private readonly RoleManager<IdentityRole> RoleManager;
+		RoleManager = roleManager;
+	}
 
-		public RolesModel(RoleManager<IdentityRole> roleManager)
+
+	public void OnGet()
+	{
+	}
+
+	public async Task<IActionResult> OnPostAsync()
+	{
+		if (!ModelState.IsValid)
 		{
-			RoleManager = roleManager;
+			return Page();
 		}
 
-
-		public void OnGet()
+		var result = await RoleManager.CreateAsync(new IdentityRole(RoleName));
+		if (result.Errors.Any())
 		{
-		}
-
-		public async Task<IActionResult> OnPostAsync()
-		{
-			if (!ModelState.IsValid)
+			foreach (var error in result.Errors)
 			{
-				return Page();
+				ModelState.AddModelError(error.Code, error.Description);
 			}
-
-			var result = await RoleManager.CreateAsync(new IdentityRole(RoleName));
-			if (result.Errors.Any())
-			{
-				foreach (var error in result.Errors)
-				{
-					ModelState.AddModelError(error.Code, error.Description);
-				}
-				return Page();
-			}
-			return RedirectToPage("Index");
+			return Page();
 		}
+		return RedirectToPage("Index");
 	}
 }

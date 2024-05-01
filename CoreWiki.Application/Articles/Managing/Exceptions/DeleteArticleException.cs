@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace CoreWiki.Application.Articles.Managing.Exceptions
+namespace CoreWiki.Application.Articles.Managing.Exceptions;
+
+[Serializable]
+internal class DeleteArticleException : Exception
 {
-	[Serializable]
-	internal class DeleteArticleException : Exception
+	public DeleteArticleException(string message, Exception innerException) : base(message, innerException)
 	{
-		public DeleteArticleException(string message, Exception innerException) : base(message, innerException)
-		{
-		}
 	}
 }

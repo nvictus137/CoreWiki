@@ -2,13 +2,12 @@
 using CoreWiki.Application.Articles.Search.Dto;
 using CoreWiki.Core.Domain;
 
-namespace CoreWiki.Application.Articles.Search
+namespace CoreWiki.Application.Articles.Search;
+
+public class SearchArticleProfile: Profile
 {
-	public class SearchArticleProfile: Profile
+	public SearchArticleProfile()
 	{
-		public SearchArticleProfile()
-		{
-			CreateMap<Article, ArticleSearchDto>();
-		}
+		CreateMap<Article, ArticleSearchDto>();
 	}
 }

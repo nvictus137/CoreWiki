@@ -6,89 +6,88 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CoreWiki.Areas.Identity.Pages.UserAdmin
+namespace CoreWiki.Areas.Identity.Pages.UserAdmin;
+
+public class IndexModel : PageModel
 {
-	public class IndexModel : PageModel
+	private readonly UserManager<CoreWikiUser> UserManager;
+	private readonly RoleManager<IdentityRole> RoleManager;
+
+	public List<CoreWikiUser> UsersList { get; private set; }
+
+	public List<IdentityRole> RolesList { get; private set; }
+
+	public List<string> RoleNames { get; private set; } = new List<string>();
+
+	public IndexModel(UserManager<CoreWikiUser> userManager, RoleManager<IdentityRole> roleManager)
 	{
-		private readonly UserManager<CoreWikiUser> UserManager;
-		private readonly RoleManager<IdentityRole> RoleManager;
+		UserManager = userManager;
+		RoleManager = roleManager;
 
-		public List<CoreWikiUser> UsersList { get; private set; }
+		var currentRoles = roleManager.Roles.ToList();
 
-		public List<IdentityRole> RolesList { get; private set; }
+		RolesList = currentRoles;
+		UsersList = UserManager.Users.ToList();
 
-		public List<string> RoleNames { get; private set; } = new List<string>();
+		RoleNames = currentRoles.Select(r => r.Name).ToList();
+	}
 
-		public IndexModel(UserManager<CoreWikiUser> userManager, RoleManager<IdentityRole> roleManager)
-		{
-			UserManager = userManager;
-			RoleManager = roleManager;
+	public IActionResult OnGet()
+	{
+		return Page();
+	}
 
-			var currentRoles = roleManager.Roles.ToList();
+	#region AddRolesToUsers
 
-			RolesList = currentRoles;
-			UsersList = UserManager.Users.ToList();
+	[BindProperty]
+	public IEnumerable<string> UpdatedRoles { get; set; }
 
-			RoleNames = currentRoles.Select(r => r.Name).ToList();
-		}
+	[BindProperty]
+	public string UsernameToAddRoleTo { get; set; }
 
-		public IActionResult OnGet()
+	public async Task<IActionResult> OnPostUpdateUserRolesAsync()
+	{
+		if (!ModelState.IsValid)
 		{
 			return Page();
 		}
 
-		#region AddRolesToUsers
+		var user = await UserManager.FindByNameAsync(UsernameToAddRoleTo);
 
-		[BindProperty]
-		public IEnumerable<string> UpdatedRoles { get; set; }
-
-		[BindProperty]
-		public string UsernameToAddRoleTo { get; set; }
-
-		public async Task<IActionResult> OnPostUpdateUserRolesAsync()
+		if (user == null)
 		{
-			if (!ModelState.IsValid)
-			{
-				return Page();
-			}
-
-			var user = await UserManager.FindByNameAsync(UsernameToAddRoleTo);
-
-			if (user == null)
-			{
-				return Page();
-			}
-
-			foreach (var role in RoleNames)
-			{
-				if (UpdatedRoles.Contains(role))
-				{
-					await UserManager.AddToRoleAsync(user, role);
-				}
-				else
-				{
-					await UserManager.RemoveFromRoleAsync(user, role);
-				}
-			}
-
-			return RedirectToPage("Index");
-		}
-
-		#endregion
-
-		[BindProperty]
-		public string RoleToRemove { get; set; }
-
-		public async Task<IActionResult> OnPostDeleteRoleAsync()
-		{
-			var role = await RoleManager.FindByNameAsync(RoleToRemove);
-			var result = await RoleManager.DeleteAsync(role);
-			if (result.Succeeded)
-			{
-				return RedirectToPage();
-			}
-
 			return Page();
 		}
+
+		foreach (var role in RoleNames)
+		{
+			if (UpdatedRoles.Contains(role))
+			{
+				await UserManager.AddToRoleAsync(user, role);
+			}
+			else
+			{
+				await UserManager.RemoveFromRoleAsync(user, role);
+			}
+		}
+
+		return RedirectToPage("Index");
+	}
+
+	#endregion
+
+	[BindProperty]
+	public string RoleToRemove { get; set; }
+
+	public async Task<IActionResult> OnPostDeleteRoleAsync()
+	{
+		var role   = await RoleManager.FindByNameAsync(RoleToRemove);
+		var result = await RoleManager.DeleteAsync(role);
+		if (result.Succeeded)
+		{
+			return RedirectToPage();
+		}
+
+		return Page();
 	}
 }

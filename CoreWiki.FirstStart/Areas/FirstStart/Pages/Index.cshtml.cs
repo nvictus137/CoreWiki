@@ -16,16 +16,16 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace CoreWiki.FirstStart.MyFeature.Pages
-{
-	public class IndexModel : PageModel
-	{
+namespace CoreWiki.FirstStart.MyFeature.Pages;
 
-		public IndexModel(IHostingEnvironment env,
-			IConfiguration config, ILoggerFactory loggerFactory,
-			UserManager<CoreWikiUser> userManager,
-			RoleManager<IdentityRole> roleManager)
-		{
+public class IndexModel : PageModel
+{
+
+	public IndexModel(IHostingEnvironment env,
+		IConfiguration                    config, ILoggerFactory loggerFactory,
+		UserManager<CoreWikiUser>         userManager,
+		RoleManager<IdentityRole>         roleManager)
+	{
 			this.Environment = env;
 			this.Configuration = config;
 			this.FirstStartConfig = new FirstStartConfiguration();
@@ -36,24 +36,24 @@ namespace CoreWiki.FirstStart.MyFeature.Pages
 
 		}
 
-		public IHostingEnvironment Environment { get; }
-		public IConfiguration Configuration { get; }
+	public IHostingEnvironment Environment   { get; }
+	public IConfiguration      Configuration { get; }
 
-		[BindProperty()]
-		public FirstStartConfiguration FirstStartConfig { get; set; }
-		public ILogger Logger { get; }
-		public UserManager<CoreWikiUser> UserManager { get; }
-		public RoleManager<IdentityRole> RoleManager { get; }
-		public bool Completed { get; set; } = false;
+	[BindProperty()]
+	public FirstStartConfiguration FirstStartConfig { get; set; }
+	public ILogger                   Logger      { get; }
+	public UserManager<CoreWikiUser> UserManager { get; }
+	public RoleManager<IdentityRole> RoleManager { get; }
+	public bool                      Completed   { get; set; } = false;
 
-		public void OnGet()
-		{
+	public void OnGet()
+	{
 
 		}
 
-		[HttpPost()]
-		public async Task<IActionResult> OnPostAsync()
-		{
+	[HttpPost()]
+	public async Task<IActionResult> OnPostAsync()
+	{
 
 			if (!ModelState.IsValid)
 			{
@@ -94,8 +94,8 @@ namespace CoreWiki.FirstStart.MyFeature.Pages
 		}
 
 
-		private void WriteConfigFileToDisk(string provider, string connectionString)
-		{
+	private void WriteConfigFileToDisk(string provider, string connectionString)
+	{
 
 			// ramblinggeek cheered 500 bits on November 4, 2018
 
@@ -123,5 +123,4 @@ namespace CoreWiki.FirstStart.MyFeature.Pages
 			System.IO.File.WriteAllText(settingsFileLocation, JsonConvert.SerializeObject(jsonFile, Formatting.Indented));
 
 		}
-	}
 }

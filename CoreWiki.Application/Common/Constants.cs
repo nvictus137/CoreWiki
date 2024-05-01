@@ -1,7 +1,6 @@
-namespace CoreWiki.Application.Common
+namespace CoreWiki.Application.Common;
+
+public static class Constants
 {
-    public static class Constants
-    {
-		public const string HomePageSlug = "home-page";
-    }
+	public const string HomePageSlug = "home-page";
 }

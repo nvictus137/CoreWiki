@@ -3,26 +3,25 @@ using CoreWiki.Application.Articles.Managing;
 using CoreWiki.Application.Articles.Reading;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CoreWiki.Configuration.Startup
+namespace CoreWiki.Configuration.Startup;
+
+public static class ConfigureAutomapperServices
 {
-	public static class ConfigureAutomapperServices
-	{
 
-		public static IMapper ConfigureAutomapper(this IServiceCollection services) {
+	public static IMapper ConfigureAutomapper(this IServiceCollection services) {
 
-			var config = new MapperConfiguration(cfg => {
-				cfg.AddProfile<ArticleReadingProfile>();
-				cfg.AddProfile<ArticleManagingProfile>();
-				cfg.AddProfile<CoreWikiWebsiteProfile>();
-			});
+		var config = new MapperConfiguration(cfg => {
+			cfg.AddProfile<ArticleReadingProfile>();
+			cfg.AddProfile<ArticleManagingProfile>();
+			cfg.AddProfile<CoreWikiWebsiteProfile>();
+		});
 
-			config.AssertConfigurationIsValid();
-			var mapper = config.CreateMapper();
+		config.AssertConfigurationIsValid();
+		var mapper = config.CreateMapper();
 
-			services?.AddSingleton(mapper);
+		services?.AddSingleton(mapper);
 
-			return mapper;
+		return mapper;
 
-		}
 	}
 }

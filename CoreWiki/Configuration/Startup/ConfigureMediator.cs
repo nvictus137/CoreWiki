@@ -6,14 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CoreWiki.Configuration.Startup
+namespace CoreWiki.Configuration.Startup;
+
+public static class ConfigureMediator
 {
-	public static class ConfigureMediator
+	public static IServiceCollection AddMediator(this IServiceCollection services)
 	{
-		public static IServiceCollection AddMediator(this IServiceCollection services)
-		{
-			services.AddMediatR();
-			return services;
-		}
+		services.AddMediatR();
+		return services;
 	}
 }

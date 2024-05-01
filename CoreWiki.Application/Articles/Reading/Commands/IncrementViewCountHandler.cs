@@ -2,23 +2,22 @@
 using System.Threading.Tasks;
 using MediatR;
 
-namespace CoreWiki.Application.Articles.Reading.Commands
+namespace CoreWiki.Application.Articles.Reading.Commands;
+
+public class IncrementViewCountHandler : IRequestHandler<IncrementViewCountCommand>
 {
-	public class IncrementViewCountHandler : IRequestHandler<IncrementViewCountCommand>
+	private readonly IArticleReadingService _service;
+
+	public IncrementViewCountHandler(IArticleReadingService service)
 	{
-		private readonly IArticleReadingService _service;
+		_service = service;
+	}
 
-		public IncrementViewCountHandler(IArticleReadingService service)
-		{
-			_service = service;
-		}
+	public async Task<Unit> Handle(IncrementViewCountCommand request, CancellationToken cancellationToken)
+	{
 
-		public async Task<Unit> Handle(IncrementViewCountCommand request, CancellationToken cancellationToken)
-		{
+		await _service.IncrementViewCount(request.Slug);
+		return Unit.Value;
 
-			await _service.IncrementViewCount(request.Slug);
-			return Unit.Value;
-
-		}
 	}
 }

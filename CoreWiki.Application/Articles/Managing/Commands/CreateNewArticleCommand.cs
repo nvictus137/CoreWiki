@@ -2,20 +2,17 @@
 using CoreWiki.Application.Common;
 using MediatR;
 
-namespace CoreWiki.Application.Articles.Managing.Commands
+namespace CoreWiki.Application.Articles.Managing.Commands;
+
+public class CreateNewArticleCommand : IRequest<CommandResult>
 {
-    public class CreateNewArticleCommand : IRequest<CommandResult>
-	{
 
-		public string Topic { get; set; }
+	public string Topic { get; set; }
 
-		public string Content { get; set; }
+	public string Content { get; set; }
 
-		public Guid AuthorId { get; set; }
+	public Guid AuthorId { get; set; }
 
-		public string AuthorName { get; set; }
-
-	}
-
+	public string AuthorName { get; set; }
 
 }

@@ -1,8 +1,7 @@
-﻿namespace CoreWiki.Configuration.Settings
+﻿namespace CoreWiki.Configuration.Settings;
+
+public enum CommentsEngine
 {
-	public enum CommentsEngine
-	{
-		Local = 0,
-		Disqus = 1
-	}
+	Local  = 0,
+	Disqus = 1
 }

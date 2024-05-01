@@ -8,42 +8,41 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace CoreWiki
+namespace CoreWiki;
+
+public class Program
 {
-	public class Program
+
+	private static IWebHost _Host;
+	private static bool     _Restart = true;
+
+	public static void Main(string[] args)
 	{
 
-		private static IWebHost _Host;
-		private static bool _Restart = true;
+		while (_Restart) {
 
-		public static void Main(string[] args)
-		{
-
-			while (_Restart) {
-
-				_Restart = false;
-				_Host = BuildWebHost(args);
-				_Host.Run();
-
-			}
+			_Restart = false;
+			_Host    = BuildWebHost(args);
+			_Host.Run();
 
 		}
 
-		public static Task Restart() {
-
-			_Restart = true;
-			return _Host.StopAsync();
-
-		}
-
-		public static IWebHost BuildWebHost(string[] args) =>
-				WebHost.CreateDefaultBuilder(args)
-						.UseApplicationInsights()
-						.UseStartup<Startup>()
-						.UseKestrel(options =>
-						{
-							options.AddServerHeader = false;
-						})
-						.Build();
 	}
+
+	public static Task Restart() {
+
+		_Restart = true;
+		return _Host.StopAsync();
+
+	}
+
+	public static IWebHost BuildWebHost(string[] args) =>
+		WebHost.CreateDefaultBuilder(args)
+		       .UseApplicationInsights()
+		       .UseStartup<Startup>()
+		       .UseKestrel(options =>
+		        {
+			        options.AddServerHeader = false;
+		        })
+		       .Build();
 }

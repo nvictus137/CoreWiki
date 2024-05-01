@@ -1,7 +1,6 @@
-﻿namespace CoreWiki.ViewModels
+﻿namespace CoreWiki.ViewModels;
+
+public class ArticleCreateFromLink
 {
-	public class ArticleCreateFromLink
-	{
-		public string Slug { get; set; }
-	}
+	public string Slug { get; set; }
 }

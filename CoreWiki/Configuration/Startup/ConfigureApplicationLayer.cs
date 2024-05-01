@@ -8,15 +8,14 @@ using CoreWiki.Application.Articles.Reading;
 using CoreWiki.Application.Articles.Reading.Impl;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CoreWiki.Configuration.Startup
+namespace CoreWiki.Configuration.Startup;
+
+public static class ConfigureApplicationLayer
 {
-	public static class ConfigureApplicationLayer
+	public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services)
 	{
-		public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services)
-		{
-			services.AddTransient<IArticleReadingService, ArticleReadingService>();
-			services.AddTransient<IArticleManagementService, ArticleManagementService>();
-			return services;
-		}
+		services.AddTransient<IArticleReadingService, ArticleReadingService>();
+		services.AddTransient<IArticleManagementService, ArticleManagementService>();
+		return services;
 	}
 }

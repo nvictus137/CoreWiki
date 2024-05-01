@@ -17,91 +17,89 @@ using CoreWiki.Helpers;
 using Microsoft.AspNetCore.Identity;
 using CoreWiki.Data.EntityFramework.Security;
 
-namespace CoreWiki.Pages
+namespace CoreWiki.Pages;
+
+[Authorize(Policy = PolicyConstants.CanWriteArticles)]
+public class CreateModel : PageModel
 {
+	private readonly IMediator                 _mediator;
+	private readonly IMapper                   _mapper;
+	private readonly ILogger                   _logger;
+	private readonly UserManager<CoreWikiUser> _userManager;
 
-	[Authorize(Policy = PolicyConstants.CanWriteArticles)]
-	public class CreateModel : PageModel
+	public CreateModel(IMediator mediator, IMapper mapper, ILoggerFactory loggerFactory, UserManager<CoreWikiUser> userManager)
 	{
-		private readonly IMediator _mediator;
-		private readonly IMapper _mapper;
-		private readonly ILogger _logger;
-		private readonly UserManager<CoreWikiUser> _userManager;
+		_mediator    = mediator;
+		_mapper      = mapper;
+		_logger      = loggerFactory.CreateLogger("CreatePage");
+		_userManager = userManager;
+	}
 
-		public CreateModel(IMediator mediator, IMapper mapper, ILoggerFactory loggerFactory, UserManager<CoreWikiUser> userManager)
+	public async Task<IActionResult> OnGetAsync(string slug = "")
+	{
+		if (string.IsNullOrEmpty(slug))
 		{
-			_mediator = mediator;
-			_mapper = mapper;
-			_logger = loggerFactory.CreateLogger("CreatePage");
-			_userManager = userManager;
-		}
-
-		public async Task<IActionResult> OnGetAsync(string slug = "")
-		{
-			if (string.IsNullOrEmpty(slug))
-			{
-				return Page();
-			}
-
-			var request = new GetArticleQuery(slug);
-			var result = await _mediator.Send(request);
-			if (result == null)
-			{
-				Article = new ArticleCreate
-				{
-					Topic = UrlHelpers.SlugToTopic(slug)
-				};
-			}
-			else
-			{
-				// TODO: Convert this to use a PageRoute
-				return Redirect($"/{slug}/Edit");
-			}
-
 			return Page();
 		}
 
-		[BindProperty]
-		public ArticleCreate Article { get; set; }
-
-		public async Task<IActionResult> OnPostAsync()
+		var request = new GetArticleQuery(slug);
+		var result  = await _mediator.Send(request);
+		if (result == null)
 		{
-			//var slug = UrlHelpers.URLFriendly(Article.Topic);
-			if (string.IsNullOrWhiteSpace(Article.Topic))
+			Article = new ArticleCreate
 			{
-				ModelState.AddModelError("Article.Topic", "The Topic must contain at least one alphanumeric character.");
-				return Page();
-			}
-
-			if (!ModelState.IsValid) { return Page(); }
-
-			_logger.LogWarning($"Creating page with topic: {Article.Topic}");
-
-			var isTopicAvailable = new GetIsTopicAvailableQuery {Topic = Article.Topic, ArticleId = 0};
-			if (await _mediator.Send(isTopicAvailable))
-			{
-				ModelState.AddModelError("Article.Topic", "This Title already exists.");
-				return Page();
-			}
-
-			var cmd = _mapper.Map<CreateNewArticleCommand>(Article);
-			var cwUser = await _userManager.GetUserAsync(User);
-			cmd = _mapper.Map(cwUser, cmd);
-
-			var cmdResult = await _mediator.Send(cmd);
-
-			// TODO: Inspect result to ensure it ran properly
-
-			// var query = new GetArticlesToCreateFromArticleQuery(cmdResult.ObjectId);
-			// var listOfSlugs = await _mediator.Send(query);
-
-			// if (listOfSlugs.Item2.Any())
-			// {
-			// 	return RedirectToPage("CreateArticleFromLink", new { id = listOfSlugs.Item1 });
-			// }
-
-			return RedirectToPage("Details", new {slug=cmdResult.ObjectId.ToString()});
-
+				Topic = UrlHelpers.SlugToTopic(slug)
+			};
 		}
+		else
+		{
+			// TODO: Convert this to use a PageRoute
+			return Redirect($"/{slug}/Edit");
+		}
+
+		return Page();
+	}
+
+	[BindProperty]
+	public ArticleCreate Article { get; set; }
+
+	public async Task<IActionResult> OnPostAsync()
+	{
+		//var slug = UrlHelpers.URLFriendly(Article.Topic);
+		if (string.IsNullOrWhiteSpace(Article.Topic))
+		{
+			ModelState.AddModelError("Article.Topic", "The Topic must contain at least one alphanumeric character.");
+			return Page();
+		}
+
+		if (!ModelState.IsValid) { return Page(); }
+
+		_logger.LogWarning($"Creating page with topic: {Article.Topic}");
+
+		var isTopicAvailable = new GetIsTopicAvailableQuery {Topic = Article.Topic, ArticleId = 0};
+		if (await _mediator.Send(isTopicAvailable))
+		{
+			ModelState.AddModelError("Article.Topic", "This Title already exists.");
+			return Page();
+		}
+
+		var cmd    = _mapper.Map<CreateNewArticleCommand>(Article);
+		var cwUser = await _userManager.GetUserAsync(User);
+		cmd = _mapper.Map(cwUser, cmd);
+
+		var cmdResult = await _mediator.Send(cmd);
+
+		// TODO: Inspect result to ensure it ran properly
+
+		// var query = new GetArticlesToCreateFromArticleQuery(cmdResult.ObjectId);
+		// var listOfSlugs = await _mediator.Send(query);
+
+		// if (listOfSlugs.Item2.Any())
+		// {
+		// 	return RedirectToPage("CreateArticleFromLink", new { id = listOfSlugs.Item1 });
+		// }
+
+		return RedirectToPage("Details", new {slug=cmdResult.ObjectId.ToString()});
+
 	}
 }
