@@ -4,7 +4,7 @@ using MediatR;
 
 namespace CoreWiki.Application.Articles.Reading.Commands;
 
-public class IncrementViewCountHandler : IRequestHandler<IncrementViewCountCommand>
+public class IncrementViewCountHandler : IRequestHandler<IncrementViewCountCommand, Unit>
 {
 	private readonly IArticleReadingService _service;
 

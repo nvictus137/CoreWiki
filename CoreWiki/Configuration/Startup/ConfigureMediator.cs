@@ -12,7 +12,7 @@ public static class ConfigureMediator
 {
 	public static IServiceCollection AddMediator(this IServiceCollection services)
 	{
-		services.AddMediatR();
+		services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 		return services;
 	}
 }

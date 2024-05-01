@@ -15,8 +15,7 @@ public class IdentityHostingStartup : IHostingStartup
 	{
 		builder.ConfigureServices((context, services) =>
 		{
-			bool.TryParse(context.Configuration["Authentication:RequireConfirmedEmail"],
-				out var requireConfirmedEmail);
+			bool.TryParse(context.Configuration["Authentication:RequireConfirmedEmail"], out var requireConfirmedEmail);
 
 			ConfigureDb(context, services);
 
@@ -28,7 +27,7 @@ public class IdentityHostingStartup : IHostingStartup
 			         })
 			        .AddRoles<IdentityRole>()
 			        .AddRoleManager<RoleManager<IdentityRole>>()
-			        .AddDefaultUI()
+			        //.AddDefaultUI()
 			        .AddDefaultTokenProviders()
 			        .AddEntityFrameworkStores<CoreWikiIdentityContext>();
 

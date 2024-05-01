@@ -2,7 +2,7 @@
 
 namespace CoreWiki.Application.Articles.Reading.Commands;
 
-public class IncrementViewCountCommand : IRequest
+public class IncrementViewCountCommand : IRequest<Unit>
 {
 
 	public IncrementViewCountCommand(string slug)
