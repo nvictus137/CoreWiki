@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,5 +16,9 @@
     <ProjectReference Include="..\CoreWiki.Data.Abstractions\CoreWiki.Data.Abstractions.csproj" />
 		<ProjectReference Include="..\CoreWiki.Data\CoreWiki.Data.EntityFramework.csproj" />
   </ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
 
 </Project>

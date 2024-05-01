@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
 		<TieredCompilation>true</TieredCompilation>
   </PropertyGroup>
 
@@ -23,6 +23,10 @@
 		<Compile Update="**\*.Designer.cs">
 			<DependentUpon>$([System.String]::Copy("%(Filename)").Replace(".Designer","")).cs</DependentUpon>
 		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 
 </Project>
