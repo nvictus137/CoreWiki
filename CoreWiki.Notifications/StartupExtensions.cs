@@ -40,11 +40,11 @@ namespace CoreWiki.Notifications
 				}
 			);
 
-			services.Configure<RazorViewEngineOptions>(options =>
-			{
-				options.FileProviders.Add(
-					new EmbeddedFileProvider(typeof(TemplateProvider).GetTypeInfo().Assembly));
-			});
+			//services.Configure<RazorViewEngineOptions>(options =>
+			//{
+			//	options.FileProviders.Add(
+			//		new EmbeddedFileProvider(typeof(TemplateProvider).GetTypeInfo().Assembly));
+			//});
 			return services;
 
 		}
