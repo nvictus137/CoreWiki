@@ -2,23 +2,22 @@
 using CoreWiki.Configuration.Startup;
 using Xunit;
 
-namespace CoreWiki.Test.Website
+namespace CoreWiki.Test.Website;
+
+public class CoreWikiWebsiteProfileTests
 {
-	public class CoreWikiWebsiteProfileTests
+	private readonly IMapper             _mapper;
+	private readonly MapperConfiguration _mapperConfiguration;
+
+	public CoreWikiWebsiteProfileTests()
 	{
-		private readonly IMapper _mapper;
-		private readonly MapperConfiguration _mapperConfiguration;
+		_mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<CoreWikiWebsiteProfile>());
+		_mapper              = _mapperConfiguration.CreateMapper();
+	}
 
-		public CoreWikiWebsiteProfileTests()
-		{
-			_mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<CoreWikiWebsiteProfile>());
-			_mapper = _mapperConfiguration.CreateMapper();
-		}
-
-		[Fact]
-		public void ConfigTest()
-		{
-			_mapperConfiguration.AssertConfigurationIsValid();
-		}
+	[Fact]
+	public void ConfigTest()
+	{
+		_mapperConfiguration.AssertConfigurationIsValid();
 	}
 }

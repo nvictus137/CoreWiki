@@ -1,12 +1,9 @@
-﻿namespace CoreWiki.FirstStart
-{
-	public class UserAppConfig {
+﻿namespace CoreWiki.FirstStart;
 
-		public string DataProvider { get; set; }
+public class UserAppConfig {
 
-		public string ConnectionString { get; set; }
+	public string DataProvider { get; set; }
 
-	}
-
+	public string ConnectionString { get; set; }
 
 }

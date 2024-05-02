@@ -2,23 +2,22 @@
 using CoreWiki.Application.Articles.Managing;
 using Xunit;
 
-namespace CoreWiki.Test.Application.Managing
+namespace CoreWiki.Test.Application.Managing;
+
+public class ArticleManagingProfileTests
 {
-	public class ArticleManagingProfileTests
+	private readonly IMapper             _mapper;
+	private readonly MapperConfiguration _mapperConfiguration;
+
+	public ArticleManagingProfileTests()
 	{
-		private readonly IMapper _mapper;
-		private readonly MapperConfiguration _mapperConfiguration;
+		_mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<ArticleManagingProfile>());
+		_mapper              = _mapperConfiguration.CreateMapper();
+	}
 
-		public ArticleManagingProfileTests()
-		{
-			_mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<ArticleManagingProfile>());
-			_mapper = _mapperConfiguration.CreateMapper();
-		}
-
-		[Fact]
-		public void ConfigTest()
-		{
-			_mapperConfiguration.AssertConfigurationIsValid();
-		}
+	[Fact]
+	public void ConfigTest()
+	{
+		_mapperConfiguration.AssertConfigurationIsValid();
 	}
 }

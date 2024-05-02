@@ -3,31 +3,30 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CoreWiki.Data.Abstractions.Interfaces
+namespace CoreWiki.Data.Abstractions.Interfaces;
+
+public interface IArticleRepository : IDisposable
 {
-	public interface IArticleRepository : IDisposable
-	{
 
-		Task<Article> GetArticleBySlug(string articleSlug);
+	Task<Article> GetArticleBySlug(string articleSlug);
 
-		Task<Article> GetArticleWithHistoriesBySlug(string articleSlug);
+	Task<Article> GetArticleWithHistoriesBySlug(string articleSlug);
 
-		Task<Article> GetArticleById(int articleId);
+	Task<Article> GetArticleById(int articleId);
 
-		Task<List<Article>> GetLatestArticles(int numOfArticlesToGet);
+	Task<List<Article>> GetLatestArticles(int numOfArticlesToGet);
 
-		Task<Article> CreateArticleAndHistory(Article article);
+	Task<Article> CreateArticleAndHistory(Article article);
 
-		Task<(IEnumerable<Article> articles, int totalFound)> GetArticlesForSearchQuery(string filteredQuery, int offset, int resultsPerPage);
+	Task<(IEnumerable<Article> articles, int totalFound)> GetArticlesForSearchQuery(string filteredQuery, int offset, int resultsPerPage);
 
-		Task<bool> IsTopicAvailable(string articleSlug, int articleId);
+	Task<bool> IsTopicAvailable(string articleSlug, int articleId);
 
-		Task<bool> Exists(int id);
+	Task<bool> Exists(int id);
 
-		Task Update(Article article);
+	Task Update(Article article);
 
-		Task IncrementViewCount(string slug);
+	Task IncrementViewCount(string slug);
 
-		Task<Article> Delete(string slug);
-	}
+	Task<Article> Delete(string slug);
 }

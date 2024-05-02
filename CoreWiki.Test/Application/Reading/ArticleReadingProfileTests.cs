@@ -2,23 +2,22 @@
 using CoreWiki.Application.Articles.Reading;
 using Xunit;
 
-namespace CoreWiki.Test.Application.Reading
+namespace CoreWiki.Test.Application.Reading;
+
+public class ArticleReadingProfileTests
 {
-	public class ArticleReadingProfileTests
+	private readonly IMapper             _mapper;
+	private readonly MapperConfiguration _mapperConfiguration;
+
+	public ArticleReadingProfileTests()
 	{
-		private readonly IMapper _mapper;
-		private readonly MapperConfiguration _mapperConfiguration;
+		_mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<ArticleReadingProfile>());
+		_mapper              = _mapperConfiguration.CreateMapper();
+	}
 
-		public ArticleReadingProfileTests()
-		{
-			_mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<ArticleReadingProfile>());
-			_mapper = _mapperConfiguration.CreateMapper();
-		}
-
-		[Fact]
-		public void ConfigTest()
-		{
-			_mapperConfiguration.AssertConfigurationIsValid();
-		}
+	[Fact]
+	public void ConfigTest()
+	{
+		_mapperConfiguration.AssertConfigurationIsValid();
 	}
 }

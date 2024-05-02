@@ -2,21 +2,20 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
-namespace CoreWiki.Pages.Components.ListComments
+namespace CoreWiki.Pages.Components.ListComments;
+
+[ViewComponent(Name = "ListComments")]
+public class ListComments : ViewComponent
 {
-	[ViewComponent(Name = "ListComments")]
-	public class ListComments : ViewComponent
+
+
+	public ListComments()
 	{
 
+	}
 
-		public ListComments()
-		{
-
-		}
-
-		public IViewComponentResult Invoke(ICollection<Comment> comments)
-		{
-			return View("ListComments", comments);
-		}
+	public IViewComponentResult Invoke(ICollection<Comment> comments)
+	{
+		return View("ListComments", comments);
 	}
 }

@@ -1,12 +1,11 @@
 ﻿using MediatR;
 
-namespace CoreWiki.Application.Articles.Managing.Events
+namespace CoreWiki.Application.Articles.Managing.Events;
+
+public class DeleteHomePageAttemptNotification : INotification
 {
-	public class DeleteHomePageAttemptNotification : INotification
+	public DeleteHomePageAttemptNotification()
 	{
-		public DeleteHomePageAttemptNotification()
-		{
 			
-		}
 	}
 }

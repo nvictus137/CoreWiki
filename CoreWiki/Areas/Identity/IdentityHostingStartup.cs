@@ -7,77 +7,75 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 
 [assembly: HostingStartup(typeof(CoreWiki.Areas.Identity.IdentityHostingStartup))]
-namespace CoreWiki.Areas.Identity
+namespace CoreWiki.Areas.Identity;
+
+public class IdentityHostingStartup : IHostingStartup
 {
-	public class IdentityHostingStartup : IHostingStartup
+	public void Configure(IWebHostBuilder builder)
 	{
-		public void Configure(IWebHostBuilder builder)
+		builder.ConfigureServices((context, services) =>
 		{
-			builder.ConfigureServices((context, services) =>
+			bool.TryParse(context.Configuration["Authentication:RequireConfirmedEmail"], out var requireConfirmedEmail);
+
+			ConfigureDb(context, services);
+
+			services.AddIdentity<CoreWikiUser, IdentityRole>(options =>
+			         {
+				         options.SignIn.RequireConfirmedEmail = requireConfirmedEmail;
+				         options.User.RequireUniqueEmail = true;
+				         options.User.AllowedUserNameCharacters = options.User.AllowedUserNameCharacters.Replace("@","");
+			         })
+			        .AddRoles<IdentityRole>()
+			        .AddRoleManager<RoleManager<IdentityRole>>()
+			        //.AddDefaultUI()
+			        .AddDefaultTokenProviders()
+			        .AddEntityFrameworkStores<CoreWikiIdentityContext>();
+
+			var authBuilder = services.AddAuthentication();
+
+			if (!string.IsNullOrEmpty(context.Configuration["Authentication:Microsoft:ApplicationId"]))
 			{
-				bool.TryParse(context.Configuration["Authentication:RequireConfirmedEmail"],
-					out var requireConfirmedEmail);
-
-				ConfigureDb(context, services);
-
-				services.AddIdentity<CoreWikiUser, IdentityRole>(options =>
+				authBuilder.AddMicrosoftAccount(microsoftOptions =>
 				{
-					options.SignIn.RequireConfirmedEmail = requireConfirmedEmail;
-					options.User.RequireUniqueEmail = true;
-					options.User.AllowedUserNameCharacters = options.User.AllowedUserNameCharacters.Replace("@","");
-				})
-					.AddRoles<IdentityRole>()
-					.AddRoleManager<RoleManager<IdentityRole>>()
-					.AddDefaultUI()
-					.AddDefaultTokenProviders()
-					.AddEntityFrameworkStores<CoreWikiIdentityContext>();
-
-				var authBuilder = services.AddAuthentication();
-
-				if (!string.IsNullOrEmpty(context.Configuration["Authentication:Microsoft:ApplicationId"]))
-				{
-					authBuilder.AddMicrosoftAccount(microsoftOptions =>
-					{
-						microsoftOptions.ClientId = context.Configuration["Authentication:Microsoft:ApplicationId"];
-						microsoftOptions.ClientSecret = context.Configuration["Authentication:Microsoft:Password"];
-					});
-				}
-
-				if (!string.IsNullOrEmpty(context.Configuration["Authentication:Twitter:ConsumerKey"]))
-				{
-					authBuilder.AddTwitter(twitterOptions =>
-					{
-						twitterOptions.ConsumerKey = context.Configuration["Authentication:Twitter:ConsumerKey"];
-						twitterOptions.ConsumerSecret = context.Configuration["Authentication:Twitter:ConsumerSecret"];
-					});
-				}
-
-				services.AddAuthorization(AuthPolicy.Execute);
-			});
-		}
-
-		private static void ConfigureDb(WebHostBuilderContext context, IServiceCollection services)
-		{
-
-			Action<DbContextOptionsBuilder> optionsBuilder;
-			var connectionString = context.Configuration.GetConnectionString("CoreWikiIdentityContextConnection");
-
-			switch (context.Configuration["DataProvider"].ToLowerInvariant())
-			{
-				case "postgres":
-					optionsBuilder = options => options.UseNpgsql(connectionString);
-					break;
-				default:
-					connectionString = !string.IsNullOrEmpty(connectionString) ? connectionString : "DataSource =./App_Data/wikiIdentity.db";
-					optionsBuilder = options => options.UseSqlite(connectionString, o =>
-					{
-						o.MigrationsAssembly("CoreWiki.Data.EntityFramework");
-					});
-					break;
+					microsoftOptions.ClientId     = context.Configuration["Authentication:Microsoft:ApplicationId"];
+					microsoftOptions.ClientSecret = context.Configuration["Authentication:Microsoft:Password"];
+				});
 			}
 
-			services.AddDbContext<CoreWikiIdentityContext>(optionsBuilder);
+			if (!string.IsNullOrEmpty(context.Configuration["Authentication:Twitter:ConsumerKey"]))
+			{
+				authBuilder.AddTwitter(twitterOptions =>
+				{
+					twitterOptions.ConsumerKey    = context.Configuration["Authentication:Twitter:ConsumerKey"];
+					twitterOptions.ConsumerSecret = context.Configuration["Authentication:Twitter:ConsumerSecret"];
+				});
+			}
 
+			services.AddAuthorization(AuthPolicy.Execute);
+		});
+	}
+
+	private static void ConfigureDb(WebHostBuilderContext context, IServiceCollection services)
+	{
+
+		Action<DbContextOptionsBuilder> optionsBuilder;
+		var connectionString = context.Configuration.GetConnectionString("CoreWikiIdentityContextConnection");
+
+		switch (context.Configuration["DataProvider"].ToLowerInvariant())
+		{
+			case "postgres":
+				optionsBuilder = options => options.UseNpgsql(connectionString);
+				break;
+			default:
+				connectionString = !string.IsNullOrEmpty(connectionString) ? connectionString : "DataSource =./App_Data/wikiIdentity.db";
+				optionsBuilder = options => options.UseSqlite(connectionString, o =>
+				{
+					o.MigrationsAssembly("CoreWiki.Data.EntityFramework");
+				});
+				break;
 		}
+
+		services.AddDbContext<CoreWikiIdentityContext>(optionsBuilder);
+
 	}
 }

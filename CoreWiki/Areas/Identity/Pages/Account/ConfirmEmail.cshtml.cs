@@ -8,20 +8,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CoreWiki.Areas.Identity.Pages.Account
-{
-    [AllowAnonymous]
-    public class ConfirmEmailModel : PageModel
-    {
-        private readonly UserManager<CoreWikiUser> _userManager;
+namespace CoreWiki.Areas.Identity.Pages.Account;
 
-        public ConfirmEmailModel(UserManager<CoreWikiUser> userManager)
-        {
+[AllowAnonymous]
+public class ConfirmEmailModel : PageModel
+{
+	private readonly UserManager<CoreWikiUser> _userManager;
+
+	public ConfirmEmailModel(UserManager<CoreWikiUser> userManager)
+	{
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> OnGetAsync(string userId, string code)
-        {
+	public async Task<IActionResult> OnGetAsync(string userId, string code)
+	{
             if (userId == null || code == null)
             {
                 return Redirect("/");
@@ -41,5 +41,4 @@ namespace CoreWiki.Areas.Identity.Pages.Account
 
             return Page();
         }
-    }
 }

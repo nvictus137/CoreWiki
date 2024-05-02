@@ -10,60 +10,59 @@ using CoreWiki.Application.Articles.Managing.Events;
 using CoreWiki.Application.Articles.Managing.Queries;
 using CoreWiki.Application.Common;
 
-namespace CoreWiki.Pages
+namespace CoreWiki.Pages;
+
+[Authorize("CanDeleteArticles")]
+
+public class DeleteModel : PageModel
 {
-	[Authorize("CanDeleteArticles")]
+	private readonly IMediator _mediator;
+	private readonly IMapper   _mapper;
 
-	public class DeleteModel : PageModel
+	public DeleteModel(IMediator mediator, IMapper mapper)
 	{
-		private readonly IMediator _mediator;
-		private readonly IMapper _mapper;
+		_mediator = mediator;
+		_mapper   = mapper;
+	}
 
-		public DeleteModel(IMediator mediator, IMapper mapper)
+	[BindProperty]
+	public ArticleDelete Article { get; set; }
+
+	///  TODO: Make it so you cannot delete the home page (deleting the home page will cause a 404)
+	///  or re-factor to make the home page dynamic or configurable.
+	public async Task<IActionResult> OnGetAsync(string slug)
+	{
+		if (slug == null)
 		{
-			_mediator = mediator;
-			_mapper = mapper;
+			return NotFound();
 		}
 
-		[BindProperty]
-		public ArticleDelete Article { get; set; }
+		var article = await _mediator.Send(new GetArticleQuery(slug));
 
-		///  TODO: Make it so you cannot delete the home page (deleting the home page will cause a 404)
-		///  or re-factor to make the home page dynamic or configurable.
-		public async Task<IActionResult> OnGetAsync(string slug)
+		if (article == null)
 		{
-			if (slug == null)
-			{
-				return NotFound();
-			}
-
-			var article = await _mediator.Send(new GetArticleQuery(slug));
-
-			if (article == null)
-			{
-				return NotFound();
-			}
-
-			if (article.IsHomePage)
-			{
-				await _mediator.Publish(new DeleteHomePageAttemptNotification());
-				return Forbid();
-			}
-
-			Article = _mapper.Map<ArticleDelete>(article);
-
-			return Page();
+			return NotFound();
 		}
 
-		public async Task<IActionResult> OnPostAsync(string slug)
+		if (article.IsHomePage)
 		{
-			if (slug == null)
-			{
-				return NotFound();
-			}
-
-			var result = await _mediator.Send(new DeleteArticleCommand(slug));
-			return RedirectToPage("Details", new {slug=Constants.HomePageSlug });
+			await _mediator.Publish(new DeleteHomePageAttemptNotification());
+			return Forbid();
 		}
+
+		Article = _mapper.Map<ArticleDelete>(article);
+
+		return Page();
+	}
+
+	public async Task<IActionResult> OnPostAsync(string slug)
+	{
+		if (slug == null)
+		{
+			return NotFound();
+		}
+
+		var result = await _mediator.Send(new DeleteArticleCommand(slug));
+		return RedirectToPage("Details", new {slug=Constants.HomePageSlug });
 	}
 }

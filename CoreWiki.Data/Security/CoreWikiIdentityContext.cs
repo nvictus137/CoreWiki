@@ -6,50 +6,49 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace CoreWiki.Data.EntityFramework.Security
+namespace CoreWiki.Data.EntityFramework.Security;
+
+public class CoreWikiIdentityContext : IdentityDbContext<CoreWikiUser>
 {
-	public class CoreWikiIdentityContext : IdentityDbContext<CoreWikiUser>
+	public CoreWikiIdentityContext(DbContextOptions<CoreWikiIdentityContext> options)
+		: base(options)
 	{
-		public CoreWikiIdentityContext(DbContextOptions<CoreWikiIdentityContext> options)
-				: base(options)
-		{
-		}
+	}
 
-		protected override void OnModelCreating(ModelBuilder builder)
-		{
-			base.OnModelCreating(builder);
+	protected override void OnModelCreating(ModelBuilder builder)
+	{
+		base.OnModelCreating(builder);
 
-			builder.Entity<IdentityRole>().HasData(new[]
+		builder.Entity<IdentityRole>().HasData(new[]
+		{
+			new IdentityRole
 			{
-				new IdentityRole
-				{
-					Name = "Authors",
-					NormalizedName = "Authors".ToUpper()
-				},
-				new IdentityRole
-				{
-					Name = "Editors",
-					NormalizedName = "Editors".ToUpper()
-				},
-				new IdentityRole
-				{
-					Name = "Administrators",
-					NormalizedName = "Administrators".ToUpper()
-				}
-			});
-		}
+				Name           = "Authors",
+				NormalizedName = "Authors".ToUpper()
+			},
+			new IdentityRole
+			{
+				Name           = "Editors",
+				NormalizedName = "Editors".ToUpper()
+			},
+			new IdentityRole
+			{
+				Name           = "Administrators",
+				NormalizedName = "Administrators".ToUpper()
+			}
+		});
+	}
 
-		public static void SeedData(CoreWikiIdentityContext context)
-		{
+	public static void SeedData(CoreWikiIdentityContext context)
+	{
 
-			context.Database.Migrate();
-
-		}
-
-		public override void Dispose()
-		{
-			base.Dispose();
-		}
+		context.Database.Migrate();
 
 	}
+
+	public override void Dispose()
+	{
+		base.Dispose();
+	}
+
 }

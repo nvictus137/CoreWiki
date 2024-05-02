@@ -1,8 +1,7 @@
-﻿namespace CoreWiki.Notifications.Models
+﻿namespace CoreWiki.Notifications.Models;
+
+public class ForgotPasswordEmailModel : EmailMessageBaseModel
 {
-    public class ForgotPasswordEmailModel : EmailMessageBaseModel
-    {
-        public string ReturnUrl { get; set; }
-        public string AccountEmail { get; set; }
-    }
+	public string ReturnUrl    { get; set; }
+	public string AccountEmail { get; set; }
 }

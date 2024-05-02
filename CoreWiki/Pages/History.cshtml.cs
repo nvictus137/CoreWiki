@@ -11,69 +11,68 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CoreWiki.Pages
+namespace CoreWiki.Pages;
+
+public class HistoryModel : PageModel
 {
-	public class HistoryModel : PageModel
+	private readonly IMediator _mediator;
+	private readonly IMapper   _mapper;
+
+	public HistoryModel(IMediator mediator, IMapper mapper)
 	{
-		private readonly IMediator _mediator;
-		private readonly IMapper _mapper;
+		_mediator = mediator;
+		_mapper   = mapper;
+	}
 
-		public HistoryModel(IMediator mediator, IMapper mapper)
+	public ArticleHistory Article { get; private set; }
+
+	[BindProperty()]
+	public IEnumerable<string> Compare { get; set; }
+
+	public SideBySideDiffModel DiffModel { get; set; }
+
+	public async Task<IActionResult> OnGet(string slug)
+	{
+		if (string.IsNullOrEmpty(slug))
 		{
-			_mediator = mediator;
-			_mapper = mapper;
+			return NotFound();
 		}
 
-		public ArticleHistory Article { get; private set; }
+		var qry = new GetArticleWithHistoriesBySlugQuery(slug);
 
-		[BindProperty()]
-		public IEnumerable<string> Compare { get; set; }
+		var article = await _mediator.Send(qry);
 
-		public SideBySideDiffModel DiffModel { get; set; }
-
-		public async Task<IActionResult> OnGet(string slug)
+		if (article == null)
 		{
-			if (string.IsNullOrEmpty(slug))
-			{
-				return NotFound();
-			}
+			return new ArticleNotFoundResult();
+		}
 
-			var qry = new GetArticleWithHistoriesBySlugQuery(slug);
+		Article = _mapper.Map<ArticleHistory>(article);
 
-			var article = await _mediator.Send(qry);
+		return Page();
+	}
 
-			if (article == null)
-			{
-				return new ArticleNotFoundResult();
-			}
-
-			Article = _mapper.Map<ArticleHistory>(article);
-
+	public async Task<IActionResult> OnPost(string slug)
+	{
+		if (Compare.Count() < 2)
+		{
 			return Page();
 		}
 
-		public async Task<IActionResult> OnPost(string slug)
-		{
-			if (Compare.Count() < 2)
-			{
-				return Page();
-			}
+		var qry = new GetArticleWithHistoriesBySlugQuery(slug);
 
-			var qry = new GetArticleWithHistoriesBySlugQuery(slug);
+		var article = await _mediator.Send(qry);
 
-			var article = await _mediator.Send(qry);
+		var histories = article.History
+		                       .Where(h => Compare.Any(c => c == h.Version.ToString()))
+		                       .OrderBy(h => h.Version)
+		                       .ToArray();
 
-			var histories = article.History
-				.Where(h => Compare.Any(c => c == h.Version.ToString()))
-				.OrderBy(h => h.Version)
-				.ToArray();
+		DiffModel = new SideBySideDiffBuilder(new DiffPlex.Differ())
+		   .BuildDiffModel(histories[0].Content ?? "", histories[1].Content ?? "");
 
-			DiffModel = new SideBySideDiffBuilder(new DiffPlex.Differ())
-				.BuildDiffModel(histories[0].Content ?? "", histories[1].Content ?? "");
+		Article = _mapper.Map<ArticleHistory>(article);
 
-			Article = _mapper.Map<ArticleHistory>(article);
-
-			return Page();
-		}
+		return Page();
 	}
 }

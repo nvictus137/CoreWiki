@@ -2,7 +2,7 @@
 @using System.Collections.Generic
 @using Microsoft.AspNetCore.Mvc.Rendering
 @using Humanizer;
-@model SearchModel
+@model CoreWiki.Pages.SearchModel
 @{
 	ViewData["Title"] = Model.RequestedPage == "search" ? Localizer["Search"] : Localizer["LatestChanges"];
 	var searchResult = Model.SearchResult;

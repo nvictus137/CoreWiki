@@ -7,26 +7,25 @@ using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using WebEssentials.AspNetCore.Pwa;
 
-namespace CoreWiki.Configuration.Startup
+namespace CoreWiki.Configuration.Startup;
+
+public static partial class ConfigurationExtensions
 {
-	public static partial class ConfigurationExtensions
+	public static IServiceCollection ConfigureScopedServices(this IServiceCollection services, IConfiguration configuration)
 	{
-		public static IServiceCollection ConfigureScopedServices(this IServiceCollection services, IConfiguration configuration)
-		{
-			services.AddSingleton<IClock>(SystemClock.Instance);
+		services.AddSingleton<IClock>(SystemClock.Instance);
 
-			services.AddHttpContextAccessor();
-			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+		services.AddHttpContextAccessor();
+		services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-			services.AddEmailNotifications(configuration);
-			services.AddScoped<IArticlesSearchEngine, ArticlesDbSearchEngine>();
+		services.AddEmailNotifications(configuration);
+		services.AddScoped<IArticlesSearchEngine, ArticlesDbSearchEngine>();
 
-			services.AddProgressiveWebApp(new PwaOptions {
-				EnableCspNonce = true,
-				RegisterServiceWorker = false
-			});
+		services.AddProgressiveWebApp(new PwaOptions {
+			EnableCspNonce        = true,
+			RegisterServiceWorker = false
+		});
 
-			return services;
-		}
+		return services;
 	}
 }

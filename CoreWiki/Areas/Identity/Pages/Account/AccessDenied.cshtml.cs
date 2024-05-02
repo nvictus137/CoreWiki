@@ -4,14 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CoreWiki.Areas.Identity.Pages.Account
+namespace CoreWiki.Areas.Identity.Pages.Account;
+
+public class AccessDeniedModel : PageModel
 {
-    public class AccessDeniedModel : PageModel
-    {
-        public void OnGet()
-        {
+	public void OnGet()
+	{
 
         }
-    }
 }
-

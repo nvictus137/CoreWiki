@@ -5,46 +5,44 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CoreWiki.Data.EntityFramework.Models
+namespace CoreWiki.Data.EntityFramework.Models;
+
+[Table("SlugHistories")]
+public class SlugHistoryDAO
 {
+	[Required, Key]
+	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+	public int Id { get; set; }
 
-	[Table("SlugHistories")]
-	public class SlugHistoryDAO
+	public virtual ArticleDAO Article { get; set; }
+
+	public string OldSlug { get; set; }
+
+	[NotMapped]
+	public Instant Added { get; set; }
+
+	[Obsolete("This property only exists for EF serialization purposes")]
+	[DataType(DataType.DateTime)]
+	[Column("Added")]
+	[EditorBrowsable(EditorBrowsableState.Never)] // Make it harder to shoot are selfs in the foot.
+	public DateTime AddedDateTime
 	{
-		[Required, Key]
-		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public int Id { get; set; }
+		get => Added.ToDateTimeUtc();
+		set => Added = DateTime.SpecifyKind(value, DateTimeKind.Utc).ToInstant();
+	}
 
-		public virtual ArticleDAO Article { get; set; }
+	public Core.Domain.SlugHistory ToDomain() {
 
-		public string OldSlug { get; set; }
-
-		[NotMapped]
-		public Instant Added { get; set; }
-
-		[Obsolete("This property only exists for EF serialization purposes")]
-		[DataType(DataType.DateTime)]
-		[Column("Added")]
-		[EditorBrowsable(EditorBrowsableState.Never)] // Make it harder to shoot are selfs in the foot.
-		public DateTime AddedDateTime
+		return new Core.Domain.SlugHistory
 		{
-			get => Added.ToDateTimeUtc();
-			set => Added = DateTime.SpecifyKind(value, DateTimeKind.Utc).ToInstant();
-		}
 
-		public Core.Domain.SlugHistory ToDomain() {
+			Added   = this.Added,
+			Article = this.Article.ToDomain(),
+			Id      = this.Id,
+			OldSlug = this.OldSlug
 
-			return new Core.Domain.SlugHistory
-			{
-
-				Added = this.Added,
-				Article = this.Article.ToDomain(),
-				Id = this.Id,
-				OldSlug = this.OldSlug
-
-			};
-
-		}
+		};
 
 	}
+
 }

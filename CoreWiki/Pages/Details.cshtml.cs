@@ -11,85 +11,86 @@ using CoreWiki.Application.Articles.Reading.Commands;
 using CoreWiki.Application.Articles.Reading.Queries;
 using CoreWiki.Application.Common;
 
-namespace CoreWiki.Pages
+namespace CoreWiki.Pages;
+
+public class DetailsModel : PageModel
 {
-	public class DetailsModel : PageModel
+	private readonly IMediator _mediator;
+	private readonly IMapper   _mapper;
+
+	public DetailsModel(IMediator mediator, IMapper mapper)
 	{
-		private readonly IMediator _mediator;
-		private readonly IMapper _mapper;
+		_mediator = mediator;
+		_mapper   = mapper;
+	}
 
-		public DetailsModel(IMediator mediator, IMapper mapper)
+	public ArticleDetails Article { get; set; }
+
+	[ViewData]
+	public string Slug { get; set; }
+
+	public async Task<IActionResult> OnGetAsync(string slug)
+	{
+		slug = slug ?? Constants.HomePageSlug;
+		var article = await _mediator.Send(new GetArticleQuery(slug));
+
+		if (article == null)
 		{
-			_mediator = mediator;
-			_mapper = mapper;
-		}
+			var historical = await _mediator.Send(new GetSlugHistoryQuery(slug));
 
-		public ArticleDetails Article { get; set; }
-
-		[ViewData]
-		public string Slug { get; set; }
-
-		public async Task<IActionResult> OnGetAsync(string slug)
-		{
-			slug = slug ?? Constants.HomePageSlug;
-			var article = await _mediator.Send(new GetArticleQuery(slug));
-
-			if (article == null)
+			if (historical != null)
 			{
-				var historical = await _mediator.Send(new GetSlugHistoryQuery(slug));
-
-				if (historical != null)
-				{
-					return Redirect(historical.Article.Slug);
-				}
-
-				return new ArticleNotFoundResult(slug);
+				return Redirect(historical.Article.Slug);
 			}
 
-			Article = _mapper.Map<ArticleDetails>(article); 
+			return new ArticleNotFoundResult(slug);
+		}
 
-			ManageViewCount(slug);
+		Article = _mapper.Map<ArticleDetails>(article); 
 
+		ManageViewCount(slug);
+
+		return Page();
+	}
+
+	private void ManageViewCount(string slug)
+	{
+		var incrementViewCount = (Request.Cookies[slug] == null);
+		if (!incrementViewCount)
+		{
+			return;
+		}
+
+		Article.ViewCount++;
+		Response.Cookies.Append(slug, "foo", new Microsoft.AspNetCore.Http.CookieOptions
+		{
+			Expires = DateTime.UtcNow.AddMinutes(5)
+		});
+
+		_mediator.Send(new IncrementViewCountCommand(slug));
+	}
+
+	public async Task<IActionResult> OnPostAsync(Comment model)
+	{
+		TryValidateModel(model);
+
+		if (!ModelState.IsValid)
+		{
 			return Page();
 		}
 
-		private void ManageViewCount(string slug)
+		var article = await _mediator.Send(new GetArticleByIdQuery(model.ArticleId));
+
+		if (article == null)
 		{
-			var incrementViewCount = (Request.Cookies[slug] == null);
-			if (!incrementViewCount)
-			{
-				return;
-			}
-
-			Article.ViewCount++;
-			Response.Cookies.Append(slug, "foo", new Microsoft.AspNetCore.Http.CookieOptions
-			{
-				Expires = DateTime.UtcNow.AddMinutes(5)
-			});
-
-			_mediator.Send(new IncrementViewCountCommand(slug));
+			return new ArticleNotFoundResult();
 		}
 
-		public async Task<IActionResult> OnPostAsync(Comment model)
-		{
-			TryValidateModel(model);
+		var commentCmd = _mapper.Map<CreateNewCommentCommand>(model);
+		commentCmd = _mapper.Map(User, commentCmd);
 
-			if (!ModelState.IsValid)
-				return Page();
+		await _mediator.Send(commentCmd);
 
-			var article = await _mediator.Send(new GetArticleByIdQuery(model.ArticleId));
-
-			if (article == null)
-			{
-				return new ArticleNotFoundResult();
-			}
-
-			var commentCmd = _mapper.Map<CreateNewCommentCommand>(model);
-				commentCmd = _mapper.Map(User, commentCmd);
-
-			await _mediator.Send(commentCmd);
-
-			return Redirect(article.Slug);
-		}
+		return Redirect(article.Slug);
 	}
 }
