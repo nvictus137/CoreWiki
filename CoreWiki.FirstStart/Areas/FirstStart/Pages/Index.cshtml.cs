@@ -49,7 +49,7 @@ public class IndexModel : PageModel
 	public void OnGet()
 	{
 
-		}
+	}
 
 	[HttpPost()]
 	public async Task<IActionResult> OnPostAsync()

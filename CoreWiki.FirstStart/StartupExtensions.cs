@@ -32,11 +32,16 @@ public static class StartupExtensions
 			return services;
 
 		}
-	public static IApplicationBuilder UseFirstStartConfiguration(this IApplicationBuilder app, IHostingEnvironment hostingEnvironment, IConfiguration configuration, UserManager<CoreWikiUser> userManager, Func<Task> restartHost)
+	public static IApplicationBuilder UseFirstStartConfiguration(
+		this IApplicationBuilder app,
+		IWebHostEnvironment webHostEnvironment,
+		IConfiguration configuration,
+		UserManager<CoreWikiUser> userManager,
+		Func<Task> restartHost)
 	{
 
-			_AppConfigurationFilename = Path.Combine(hostingEnvironment.ContentRootPath, "appsettings.json");
-			_RestartHost = restartHost;
+			_AppConfigurationFilename = Path.Combine(webHostEnvironment.ContentRootPath, "appsettings.json");
+			_RestartHost              = restartHost;
 
 			_IsAdminUserCreated = (userManager.GetUsersInRoleAsync("Administrators").GetAwaiter().GetResult()).Count > 0;
 

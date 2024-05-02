@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 
 namespace CoreWiki.Application.Common;
 
@@ -12,16 +13,17 @@ public static class StringHelpers
 	/// <returns>The number of words in the sentence</returns>
 	public static int WordCount(this string content)
 	{
-		if (content == null) return 0;
+		if (content == null)
+		{
+			return 0;
+		}
 
 		var wordCount   = 0;
 		var letterCount = 0;
 
-		foreach (var c in content)
+		foreach (var c in content.Where(c => c != '\''))
 		{
-			if (c == '\'') continue;
-
-			if (Char.IsLetterOrDigit(c))
+			if (char.IsLetterOrDigit(c))
 			{
 				letterCount++;
 			}
@@ -32,7 +34,10 @@ public static class StringHelpers
 			}
 		}
 
-		if (letterCount > 0) wordCount++;
+		if (letterCount > 0)
+		{
+			wordCount++;
+		}
 
 		return wordCount;
 	}
@@ -49,6 +54,7 @@ public static class StringHelpers
 		var           minutes   = (double)(wordCount / wpm);
 		return TimeSpan.FromMinutes(minutes);
 	}
+
 	/// <summary>
 	/// Returns the string supplied in title case
 	/// </summary>
@@ -60,6 +66,7 @@ public static class StringHelpers
 		var textInfo = new CultureInfo(culture, false).TextInfo;
 		return textInfo.ToTitleCase(content);
 	}
+
 	/// <summary>
 	/// Returns the string supplied in title case
 	/// </summary>

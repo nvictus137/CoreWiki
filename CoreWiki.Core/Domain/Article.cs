@@ -62,7 +62,10 @@ public class Article
 
 	private static string URLFriendly(string title)
 	{
-		if (string.IsNullOrEmpty(title)) return "";
+		if (string.IsNullOrEmpty(title))
+		{
+			return "";
+		}
 
 		var newTitle = RemoveDiacritics(title);
 

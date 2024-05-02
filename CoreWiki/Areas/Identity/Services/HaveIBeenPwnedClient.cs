@@ -91,6 +91,7 @@ public class HIBPClient
 		}
 	}
 
+	[Obsolete("Obsolete")]
 	public static string Sha1Hash(string input)
 	{
 		using (var sha1 = new SHA1Managed())

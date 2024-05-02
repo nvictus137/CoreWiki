@@ -23,10 +23,14 @@ public class TemplateProvider : ITemplateProvider
 	{
             var viewPath = $"/{TemplateRoot}/{templateName}{TemplateExtension}";
             var viewEngineResult = _viewEngine.GetView(executingFilePath: null, viewPath: viewPath, isMainPage: true);
-            if (viewEngineResult.Success) return viewEngineResult.View;
+            if (viewEngineResult.Success)
+            {
+	            return viewEngineResult.View;
+            }
 
             var searchedLocations = string.Concat(viewEngineResult.SearchedLocations);
 
             throw new Exception($"Template: '{templateName}' not found. Searched locations: {searchedLocations}");
-        }
+
+	}
 }

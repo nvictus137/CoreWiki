@@ -75,7 +75,9 @@ public class DetailsModel : PageModel
 		TryValidateModel(model);
 
 		if (!ModelState.IsValid)
+		{
 			return Page();
+		}
 
 		var article = await _mediator.Send(new GetArticleByIdQuery(model.ArticleId));
 

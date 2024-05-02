@@ -14,10 +14,4 @@
     <ProjectReference Include="..\CoreWiki.Data.Abstractions\CoreWiki.Data.Abstractions.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="System">
-      <HintPath>System</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

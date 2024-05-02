@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace CoreWiki.Configuration.Startup;
 
@@ -21,7 +22,7 @@ public static partial class ConfigurationExtensions
 		return services;
 	}
 
-	public static IApplicationBuilder ConfigureSecurityHeaders(this IApplicationBuilder app, IHostingEnvironment env)
+	public static IApplicationBuilder ConfigureSecurityHeaders(this IApplicationBuilder app, IWebHostEnvironment env)
 	{
 		if (!env.IsDevelopment())
 		{

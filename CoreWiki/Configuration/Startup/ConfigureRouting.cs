@@ -28,8 +28,8 @@ public static partial class ConfigurationExtensions
 			         options.Conventions.AddPageRoute("/History", "{Slug?}/History");
 			         options.Conventions.AuthorizeAreaFolder("Identity", "/UserAdmin", PolicyConstants.CanManageRoles);
 			         options.Conventions.AddPageRoute("/Details", "{Slug?}");
-		         })
-		        .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+		         });
+		        //.SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
 		return services;
 	}
