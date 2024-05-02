@@ -24,8 +24,4 @@
     <ProjectReference Include="..\CoreWiki\CoreWiki.csproj" />
   </ItemGroup>
 
-	<ItemGroup>
-		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-	</ItemGroup>
-
 </Project>

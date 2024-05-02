@@ -66,8 +66,4 @@
     <Exec WorkingDirectory=".\" Command="npm install --no-save" />
   </Target>
 
-	<ItemGroup>
-		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-	</ItemGroup>
-
 </Project>
